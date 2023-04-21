@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">My Application</string>
+    <string name="textview">0</string>
+    <string name="button">Get Permission</string>
+    <string name="channel_name">Channel 1</string>
+    <string name="channel_description">Channel Description</string>
+</resources>
