@@ -3,20 +3,25 @@ package com.practice.myapplication
 import android.Manifest
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.util.Log
 import android.widget.Button
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.result.registerForActivityResult
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 
 class MainActivity : AppCompatActivity() {
+
+    private val mContext: Context = this
+
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -46,20 +51,77 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    fun sendingNotification() {
+        val textTitle = "Greetings"
+        val textContext = "Hey Bitch"
+        val notification = NotificationCompat.Builder(this, "Channel 1")
+            .setSmallIcon(androidx.core.R.drawable.notification_icon_background)
+            .setContentTitle(textTitle).setContentText(textContext)
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT).setSmallIcon(R.drawable.luffy)
+            .build()
+//        notificationManager.notify(1, notification)
+        with(NotificationManagerCompat.from(this)) {
+            // notificationId is a unique int for each notification that you must define
+            val grantedVal =
+                mContext.let {
+                    ContextCompat.checkSelfPermission(
+                        it,
+                        Manifest.permission.POST_NOTIFICATIONS
+                    )
+                }
+            if (grantedVal == PackageManager.PERMISSION_GRANTED) {
+                notify(0, notification)
+            }
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    fun sendingNotificationDone() {
+        val textTitle = "Greetings"
+        val textContext = "Done"
+        val notification = NotificationCompat.Builder(this, "Channel 1")
+            .setSmallIcon(androidx.core.R.drawable.notification_icon_background)
+            .setContentTitle(textTitle).setContentText(textContext)
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT).setSmallIcon(R.drawable.luffy)
+            .build()
+//        notificationManager.notify(1, notification)
+        with(NotificationManagerCompat.from(this)) {
+            // notificationId is a unique int for each notification that you must define
+            val grantedVal =
+                mContext.let {
+                    ContextCompat.checkSelfPermission(
+                        it,
+                        Manifest.permission.POST_NOTIFICATIONS
+                    )
+                }
+            if (grantedVal == PackageManager.PERMISSION_GRANTED) {
+                notify(0, notification)
+            }
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        val time = object : CountDownTimer(20000, 1000) {
+            @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+            override fun onTick(millisUntilFinished: Long) {
+                sendingNotification()
+            }
+
+            @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+            override fun onFinish() {
+                sendingNotificationDone()
+            }
+        }
+        time.start()
+    }
+
     val requestPermissionLauncher =
         registerForActivityResult(
             ActivityResultContracts.RequestPermission()
         ) { isGranted: Boolean ->
-            if (isGranted) {
-                // Permission is granted. Continue the action or workflow in your
-                // app.
-            } else {
-                // Explain to the user that the feature is unavailable because the
-                // feature requires a permission that the user has denied. At the
-                // same time, respect the user's decision. Don't link to system
-                // settings in an effort to convince the user to change their
-                // decision.
-            }
+
         }
 
 
